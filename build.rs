@@ -28,12 +28,16 @@ fn read_dir_recursive(path: impl AsRef<Path>) -> std::io::Result<Vec<PathBuf>> {
 
 fn main() {
     let mut builder = cc::Build::new();
-    let binding = builder.cpp(true).warnings(false).include("include");
+    let binding = builder
+        .cpp(true)
+        .warnings(false)
+        .debug(true)
+        .include(PathBuf::new().join("llvm").join("include"));
 
     // binding.file("foo.cpp");
     // println!("cargo:rerun-if-changed={}", "foo.cpp");
 
-    let list = read_dir_recursive("lib").unwrap();
+    let list = read_dir_recursive(PathBuf::new().join("llvm").join("lib")).unwrap();
     for path in list {
         println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
         binding.file(path);
